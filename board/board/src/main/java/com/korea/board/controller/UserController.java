@@ -1,0 +1,47 @@
+package com.korea.board.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.korea.board.dto.user.FindUserIdDTO;
+import com.korea.board.dto.user.FindUserPasswordDTO;
+import com.korea.board.dto.user.LoginResponseDTO;
+import com.korea.board.dto.user.UserLoginDTO;
+import com.korea.board.dto.user.UserSignupDTO;
+import com.korea.board.model.User;
+import com.korea.board.service.UserService;
+
+@Controller
+public class UserController {
+	
+	@Autowired
+	public UserService service;
+	
+	@PostMapping("/signup") //회원가입 
+	public ResponseEntity<?> create(@RequestBody UserSignupDTO dto){
+		User entity = UserSignupDTO.toEntity(dto);
+		UserSignupDTO user = service.create(entity); 
+		return ResponseEntity.ok(user);
+	}
+	@GetMapping("/login")//로그인
+	public ResponseEntity<?> login(@RequestBody UserLoginDTO dto){
+		LoginResponseDTO response = service.login(dto);
+		return ResponseEntity.ok(response);
+	}
+	@PostMapping("/findId")//아이디 찾기
+	public ResponseEntity<?> findUserId(@RequestBody FindUserIdDTO dto){
+		String userId = service.findUserIdByemail(dto.getEmail());
+		return ResponseEntity.ok(userId);
+	}
+	@PostMapping("/findPassword")//비밀번호 찾기
+	public ResponseEntity<?> resetPassword(@RequestBody FindUserPasswordDTO dto){
+		service.resetPassword(dto.getUserId(), dto.getEmail(), dto.getNewPassword());
+		return ResponseEntity.ok("비밀번호가 재설정 되었습니다");
+	}
+
+
+}

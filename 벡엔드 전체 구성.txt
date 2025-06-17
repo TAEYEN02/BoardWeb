@@ -1,0 +1,68 @@
+백엔드 파일구조
+src
+└── main
+    └── java
+        └── com.example.project
+            ├── controller          
+            │   ├── UserController.java
+            │   └── BoardController.java
+            │
+            ├── dto            
+            │   ├── user
+	│   │   ├── UserSignupDto.java            // 회원가입 - OK
+	│   │   ├── UserLoginDto.java             // 로그인
+	│   │   ├── UserUpdateDto.java            // 정보 수정
+	│   │   └── UserResetPasswordDto.java     // 비밀번호 재설정 (이메일 인증 기반)
+	│   └── board
+	│       ├── BoardCreateDto.java           // 게시물 작성
+	│       ├── BoardUpdateDto.java           // 게시물 수정
+	│       └── BoardResponseDto.java         // 게시물 조회 시 클라이언트 응답용
+            │
+            ├── model             
+            │   ├── User.java
+            │   └── Board.java
+            │
+            ├── repository         
+            │   ├── UserRepository.java
+            │   └── BoardRepository.java
+            │
+            ├── service           
+            │   ├── UserService.java
+            │   └── BoardService.java
+            │
+            ├── config             
+            │   ├── CorsConfig.java
+            │   ├── SecurityConfig.java
+            │   └── WebConfig.java
+            │
+            ├── exception        
+            │   ├── GlobalExceptionHandler.java // 공통 에러 응답
+            │   ├── CustomException.java // 특정 도메인 예외처리
+            │   └── UserNotFoundException.java //특정 도메인
+            │
+            └── util               
+                ├── EmailUtil.java
+                └── FileStorageUtil.java
+
+User
+- 로그인
+  ㄴ 아이디, 비밀번호
+- 회원가입
+  ㄴ 이름, 아이디, 비밀번호, 이메일, 별칭
+- 게시물 등록
+  ㄴ 파일, 이미지, text 등록
+- 회원 탈퇴
+- 정보 수정
+  ㄴ 별칭, 비밀번호
+- 아이디, 비밀번호 찾기
+  ㄴ 아이디는 이메일로, 비밀번호 찾기는 이메일로 비밀번호 재설정
+- 게시글 수정
+  ㄴ 파일, 이미지, text
+
+Board
+- 전체 회원 게시물
+  ㄴ 전체 게시글, 별칭
+- 게시글 찾기
+  ㄴ 별칭으로 찾기
+  ㄴ 글 내용으로 찾기 (시간되면)
+- 내 전체 게시물 보기 

@@ -1,0 +1,97 @@
+/* 배경 설정 */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f2f4f7;
+}
+
+/* 중앙 정렬 */
+.Login {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 카드 형태 박스 */
+.Login-Box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
+}
+
+/* 제목 */
+.title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* 폼 입력 영역 */
+.Login-Form {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.input-wrapper input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+    padding-left: 10px;
+}
+
+.icon {
+    color: #666;
+    font-size: 24px;
+}
+
+/* 버튼 */
+.login-button {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #3f51b5;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.login-button:hover {
+    background-color: #303f9f;
+}
+
+/* 비밀번호 찾기 링크 스타일 */
+.forgot .newMember {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.forgot:hover {
+    color: #3f51b5;
+}
+/* 회원가입 링크 스타일 */
+.newMember:hover{
+    color:#b53f3f;
+}
+
+.newMember a, .forgot a {
+  text-decoration: none;
+}
