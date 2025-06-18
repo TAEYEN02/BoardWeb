@@ -1,11 +1,11 @@
 package com.korea.board.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.korea.board.dto.user.FindUserIdDTO;
 import com.korea.board.dto.user.FindUserPasswordDTO;
@@ -15,11 +15,14 @@ import com.korea.board.dto.user.UserSignupDTO;
 import com.korea.board.model.User;
 import com.korea.board.service.UserService;
 
-@Controller
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
 public class UserController {
 	
-	@Autowired
-	public UserService service;
+	public final UserService service;
 	
 	@PostMapping("/signup") //회원가입 
 	public ResponseEntity<?> create(@RequestBody UserSignupDTO dto){
