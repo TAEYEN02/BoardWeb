@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import SignUp from './pages/signup';
 import Login from './pages/login';
 import Forgot from './pages/forgot';
@@ -18,6 +18,8 @@ const AppRoutes = () => {
         <Route path='/signup' element={<SignUp />} />
         <Route path='/forgot' element={<Forgot />} />
         <Route path='/main' element={<Main />} />
+
+        <Route path='*'element={<Navigate to="/" replace />}/>
       </Routes>
     </>
   );
