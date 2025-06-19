@@ -9,14 +9,14 @@ src
             │
             ├── dto            
             │   ├── user
-	│   │   ├── UserSignupDto.java            // 회원가입 - OK
-	│   │   ├── UserLoginDto.java             // 로그인
-	│   │   ├── UserUpdateDto.java            // 정보 수정
-	│   │   └── UserResetPasswordDto.java     // 비밀번호 재설정 (이메일 인증 기반)
-	│   └── board
-	│       ├── BoardCreateDto.java           // 게시물 작성
-	│       ├── BoardUpdateDto.java           // 게시물 수정
-	│       └── BoardResponseDto.java         // 게시물 조회 시 클라이언트 응답용
+	     |    ├── UserSignupDto.java            // 회원가입 - OK
+	    │   ├── UserLoginDto.java             // 로그인
+	    │   ├── UserUpdateDto.java            // 정보 수정
+	    │   └── UserResetPasswordDto.java     // 비밀번호 재설정 (이메일 인증 기반)
+	    │   └── board
+	    │       ├── BoardCreateDto.java           // 게시물 작성
+	    │       ├── BoardUpdateDto.java           // 게시물 수정
+	    │       └── BoardResponseDto.java         // 게시물 조회 시 클라이언트 응답용
             │
             ├── model             
             │   ├── User.java
@@ -36,10 +36,9 @@ src
             │   └── WebConfig.java
             │
             ├── exception        
-            │   ├── GlobalExceptionHandler.java // 공통 에러 응답
-            │   ├── CustomException.java // 특정 도메인 예외처리
-            │   └── UserNotFoundException.java //특정 도메인
-            │
+            │   ├── GlobalExceptionHandler.java 
+            │   ├── CustomException.java 
+            │   └── UserNotFoundException.java           
             └── util               
                 ├── EmailUtil.java
                 └── FileStorageUtil.java
