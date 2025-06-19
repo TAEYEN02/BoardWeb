@@ -8,9 +8,10 @@ const ButtonStyled = styled.button`
     border-color : #1976d2;
 `;
 
-const ButtonComponent = ({onClick, disable, title,children}) => {
+const ButtonComponent = ({onClick, disable, title,children,type}) => {
     return(
         <ButtonStyled
+            type={type}
             onClick={onClick}
             disabled={disable}
             title={title}

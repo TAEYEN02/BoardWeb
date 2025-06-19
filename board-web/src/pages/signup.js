@@ -5,8 +5,10 @@ import LockIcon from "@mui/icons-material/Lock";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/signup.css";
 import ButtonComponent from "../component/Button";
+import { useState } from "react";
 
 const SignUp = () => {
+    const [name, setName] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -14,7 +16,8 @@ const SignUp = () => {
         navigate("/");
     };
 
-    const distinctNickName = () => {
+    const distinctNickName = (e) => {
+        e.preventDefault();
         alert("중복확인");
     }
 
@@ -25,7 +28,7 @@ const SignUp = () => {
                 <form className="Signup-Form" onSubmit={handleSubmit}>
                     <div className="input-wrapper">
                         <AccountCircle className="icon" />
-                        <input type="text" placeholder="Your Name" required />
+                        <input type="text" placeholder="Your Name" required /> {/*required : 필수 */}
                     </div>
                       <div className="input-wrapper">
                         <AccountCircle className="icon" />
@@ -48,7 +51,7 @@ const SignUp = () => {
                             type="submit" 
                             variant="contained" 
                             fullWidth
-                            style={{ padding: "12px", fontSize: "18px" 
+                            style={{ padding: "12px", fontSize: "18px", backgroundColor:"#afaeeb"
                             }}>
                             Submit
                         </Button>
