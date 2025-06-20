@@ -16,7 +16,7 @@ const DiaryCard = ({diary}) => {
                     {diary.content}
                 </Typography>
                 <Typography variant="caption" sx={{mt:2, display:"block"}}>
-                    감정 : {diary.emotion} • 좋아요: {diary.liked}
+                     좋아요: {diary.liked} • {diary.day}
                 </Typography>
             </CardContent>
         </Card>

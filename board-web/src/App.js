@@ -4,6 +4,8 @@ import Login from './pages/login';
 import Forgot from './pages/forgot';
 import Main from './pages/main';
 import NavBar from './component/Navbar';
+import BoardList from './pages/board';
+import Write from './pages/write';
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -18,6 +20,8 @@ const AppRoutes = () => {
         <Route path='/signup' element={<SignUp />} />
         <Route path='/forgot' element={<Forgot />} />
         <Route path='/main' element={<Main />} />
+        <Route path='/board' element={<BoardList/>}/>
+        <Route path='/write' element={<Write/>}/>
 
         <Route path='*'element={<Navigate to="/" replace />}/>
       </Routes>

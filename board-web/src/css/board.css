@@ -1,0 +1,54 @@
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.search-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.search-box input{
+    margin-right: 10px;
+    width: 400px;
+}
+.search-box button{
+    border-radius: 5px;
+    width: 100px;
+    background-color: #1976d2;
+    border-style: none;
+    font-weight: bold;
+    color: white;
+  
+}
+.search-box button:hover{
+    background-color:#115293 ;
+}
+
+.board-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.board-card:hover {
+  transform: scale(1.03);
+}
+
+.board-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.board-card h3 {
+  margin: 10px;
+}

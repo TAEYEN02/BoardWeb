@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import "../css/forgot.css";
-import { Button} from "@mui/material";
 
 const Forgot = () => {
     const handleFindId = (e) => {

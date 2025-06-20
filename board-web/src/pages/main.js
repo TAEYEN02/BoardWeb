@@ -2,34 +2,51 @@ import "swiper/css"
 import "swiper/css/navigation"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { useEffect, useState } from "react"
-import { Navigation } from "swiper/modules"
+import { Navigation, Autoplay } from "swiper/modules"
 import DiaryCard from "../component/DiaryCard"
+import boardDummyData from "../data/boardDummyData"
+import BoardModal from "../component/BarderModel";
 
 const Main = () => {
     const [diaries, setDiaries] = useState([]);
+    const [selectedBoard, setSelectedBoard] = useState(null);
+
+    // useEffect(() => {
+    //     fetch("/api/boards")
+    //         .then(res => res.json())
+    //         .then(data => setBoards(data));
+    // }, []);
 
     useEffect(() => {
-        fetch("/api/diaries")
-            .then((res) => res.json())
-            .then((data) => setDiaries(data))
-            .catch((err) => console.error("일기 불러오기 실패 : ", err));
+        setDiaries(boardDummyData)
     }, [])
+
+
     return (
-        <div style={{ width: "100%", height: "100vh" }}>
+        <div style={{ width: "100%", height: "100vh", justifyContent: "center", alignContent: "center", paddingTop: "50px" }}>
             <Swiper
-                modules={[Navigation]}
+                modules={[Navigation, Autoplay]}
                 navigation
                 spaceBetween={50}
                 slidesPerView={1}
                 direction="horizontal"
                 style={{ height: "100%" }}
+                loop={true}
+                effect="slide"
+                autoplay={{
+                    delay: 3000,
+                    disableOnInteraction: false,
+                }}
             >
-                {diaries.map((diary) => (
+                {boardDummyData.map((diary) => (
                     <SwiperSlide key={diary.id}>
-                        <DiaryCard diary={diary} />
+                        <div onClick={() => setSelectedBoard(diary)}>
+                            <DiaryCard diary={diary} />
+                        </div>
                     </SwiperSlide>
                 ))}
             </Swiper>
+             <BoardModal board={selectedBoard} onClose={() => setSelectedBoard(null)} />
         </div>
     )
 }

@@ -31,7 +31,7 @@ const NavBar = () => {
                     <Grid item>
                         <Button
                             onClick={onhandleLogout}
-                            sx={{ whiteSpace: "nowrap", color: "black", fontSize: "16px" }}
+                            sx={{ whiteSpace: "nowrap", color: "gray", fontSize: "16px", backgroundColor:"lightgray" }}
                         >
                             logout
                         </Button>
