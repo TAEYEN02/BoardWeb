@@ -1,5 +1,6 @@
 package com.korea.board.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,9 +22,16 @@ public class User {
 	@GeneratedValue(strategy =GenerationType.AUTO)
 	private Long id;
 	
-	private String userId;
+	 
+	@Column(unique = true, nullable = false)
+	private String userId; // 사용자가 입력하는 ID (로그인용)
+	
 	private String userName;
-	private String email;
+	
+	@Column(nullable = false, unique = true)
+	private String email;//이메일(아이디/비번 찾기)
+	
+	@Column(nullable = false)
 	private String password;
 	private String nickname;	
 }

@@ -9,8 +9,13 @@ import com.korea.board.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findByUserId(String email);
+	Optional<User> findByUserId(String userId);
+
+	Optional<User> findByEmail(String email);
+
 	Optional<User> findByUserIdAndEmail(String userId, String email);
-	Optional<User> findByUserName(String userId);
-	
+
+	boolean existsByUserId(String userId);
+
+	boolean existsByEmail(String email);
 }

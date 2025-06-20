@@ -30,7 +30,7 @@ public class UserController {
 		UserSignupDTO user = service.create(entity); 
 		return ResponseEntity.ok(user);
 	}
-	@GetMapping("/login")//로그인
+	@PostMapping("/login")//로그인
 	public ResponseEntity<?> login(@RequestBody UserLoginDTO dto){
 		LoginResponseDTO response = service.login(dto);
 		return ResponseEntity.ok(response);

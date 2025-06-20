@@ -9,6 +9,7 @@ import com.korea.board.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import com.korea.board.config.JwtTokenProvider;
 import com.korea.board.dto.user.LoginResponseDTO;
 import com.korea.board.dto.user.UserLoginDTO;
 import com.korea.board.dto.user.UserSignupDTO;
@@ -21,6 +22,8 @@ public class UserService {
 	public UserRepository repository;
 	@Autowired
 	public PasswordEncoder passwordEncoder;
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 	
 	
 	public UserSignupDTO create(User user){
@@ -31,17 +34,22 @@ public class UserService {
 	
 	//로그인 로직
 	public LoginResponseDTO login(UserLoginDTO dto) {
-		User user = repository.findByUserName(dto.getUserId())
-							.orElseThrow(()-> new RuntimeException("존재하지 않는 사용자 입니다"));
-		if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-			throw new RuntimeException("비밀번호가 일치하지 않습니다");
-		}
-		return new LoginResponseDTO (user.getUserId(),user.getNickname());
+	    User user = repository.findByUserId(dto.getUserId())
+	        .orElseThrow(() -> new RuntimeException("존재하지 않는 사용자 입니다"));
+
+	    if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+	        throw new RuntimeException("비밀번호가 일치하지 않습니다");
+	    }
+
+	    String token = jwtTokenProvider.generateToken(user.getUserId()); // ✅ 토큰 생성
+
+	    return new LoginResponseDTO(user.getUserId(), user.getNickname(), token); // ✅ 응답에 포함
 	}
+
 	
 	//아이디 찾기
 	public String findUserIdByemail(String email) {
-		User user = repository.findByUserId(email)
+		User user = repository.findByEmail(email)
 						.orElseThrow(()->new RuntimeException("등록된 이메일이 없습니다"));
 		return user.getUserId();
 	}
