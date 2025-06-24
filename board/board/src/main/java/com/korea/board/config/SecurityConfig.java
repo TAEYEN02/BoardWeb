@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/boards").authenticated() // 게시글 작성은 로그인 필요
                 .anyRequest().authenticated()
             )
-            .headers(headers -> headers.frameOptions().sameOrigin()) // H2 콘솔용
+            //.headers(headers -> headers.frameOptions().sameOrigin()) // H2 콘솔용
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 등록
 
         return http.build();

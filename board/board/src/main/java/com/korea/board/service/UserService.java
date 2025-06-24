@@ -25,7 +25,7 @@ public class UserService {
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 	
-	
+	//회원가입
 	public UserSignupDTO create(User user){
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User saved = repository.save(user);
@@ -60,5 +60,10 @@ public class UserService {
 					.orElseThrow(()-> new RuntimeException("일치하는 계정을 찾을 수 없습니다"));
 		user.setPassword(passwordEncoder.encode(newPassword));
 		repository.save(user);
+	}
+	
+	//닉네임 중복확인
+	public boolean isNicknameDuplicate(String nickname) {
+	    return repository.existsByNickname(nickname);
 	}
 }

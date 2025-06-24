@@ -1,5 +1,7 @@
 package com.korea.board.dto.board;
 
+import java.time.LocalDate;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
@@ -12,8 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardCreateDTO {
-    private String title;
+	private String title;
     private String content;
+    private LocalDate day;
     private MultipartFile image;
 
 }

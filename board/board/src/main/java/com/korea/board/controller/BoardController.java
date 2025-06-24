@@ -24,6 +24,7 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<BoardResponseDTO> create(@ModelAttribute BoardCreateDTO dto,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+    	System.out.println(">>> Authenticated user: " + userDetails);
         return ResponseEntity.ok(service.create(dto, userDetails.getUser()));
     }
 

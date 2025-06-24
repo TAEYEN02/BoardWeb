@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="board")
+@Table(name = "board")
 public class Board {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -29,13 +29,16 @@ public class Board {
 
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+//    @Column(columnDefinition = "TEXT")
+    @Column(length = 10000)
     private String content;
 
     private String imageUrl;
-
+    
+    @Column(name = "\"day\"")
     private LocalDate day;
 
+    @Builder.Default
     private int liked = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
