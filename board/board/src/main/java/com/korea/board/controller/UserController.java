@@ -45,6 +45,17 @@ public class UserController {
 		service.resetPassword(dto.getUserId(), dto.getEmail(), dto.getNewPassword());
 		return ResponseEntity.ok("비밀번호가 재설정 되었습니다");
 	}
+	@GetMapping("/check-nickname")//아이디 중복 확인
+	public ResponseEntity<?> checkNicknameDuplicate(String nickname) {
+	    boolean exists = service.isNicknameDuplicate(nickname);
+	    return ResponseEntity.ok(exists);  // true면 중복됨
+	}
+
+	@GetMapping("/check-userid") // 아이디 중복 확인
+	public ResponseEntity<?> checkUserIdDuplicate(String userId) {
+	    boolean exists = service.isUserIdDuplicate(userId);
+	    return ResponseEntity.ok(exists); // true면 중복됨
+	}
 
 
 }
