@@ -1,0 +1,99 @@
+.mypage-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mypage-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
+  height: 400px;
+  width: 400px;
+}
+
+.mypage-section h2 {
+  margin-top: 0;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.user-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin : 20px;
+  height: 400px;
+  width: 400px;
+  align-items: center;
+}
+
+.user-profile-form div {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-profile-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.user-profile-form input,
+.user-profile-form textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 300px;
+}
+
+.user-profile-form button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.user-profile-form button:hover {
+  background-color: #0056b3;
+}
+
+.post-list {
+  list-style: none;
+  padding-bottom: 30px;
+}
+
+.post-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.post-item:last-child {
+  border-bottom: none;
+}
+
+.calendar-container {
+    height: 600px; /* 달력의 높이를 지정해야합니다. */
+}
+
+.mypage-section-calendar {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
+}
+
+/* react-big-calendar 기본 스타일 import */
+@import 'react-big-calendar/lib/css/react-big-calendar.css';
