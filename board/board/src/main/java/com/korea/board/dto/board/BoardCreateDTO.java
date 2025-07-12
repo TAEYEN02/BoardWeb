@@ -18,5 +18,8 @@ public class BoardCreateDTO {
     private String content;
     private LocalDate day;
     private MultipartFile image;
+    
+    //이미지 삭제 여부(checkbox)
+    private boolean deleteImage;
 
 }

@@ -26,10 +26,12 @@ public class BoardService {
 
     public BoardResponseDTO create(BoardCreateDTO dto, User user) {
         String imageUrl = null;
-        try {
-            imageUrl = fileUtil.saveFile(dto.getImage());
-        } catch (Exception e) {
-            throw new RuntimeException("이미지 저장 실패", e);
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+            try {
+                imageUrl = fileUtil.saveFile(dto.getImage());
+            } catch (Exception e) {
+                throw new RuntimeException("이미지 저장 실패", e);
+            }
         }
 
         Board board = Board.builder()
@@ -55,6 +57,12 @@ public class BoardService {
                 .toList();
     }
 
+    public List<BoardResponseDTO> getBoardsByUserId(String userId) {
+        return repository.findByUserUserId(userId).stream()
+                .map(BoardResponseDTO::new)
+                .toList();
+    }
+
     public BoardResponseDTO getOne(Long id) {
         return repository.findById(id)
                 .map(BoardResponseDTO::new)
@@ -77,4 +85,41 @@ public class BoardService {
 
         repository.delete(board);
     }
+
+    @Transactional
+    public BoardResponseDTO update(Long id, BoardCreateDTO dto, User user) {
+        Board board = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글 없음"));
+
+        // 권한 체크
+        if (!board.getUser().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
+
+        board.setTitle(dto.getTitle());
+        board.setContent(dto.getContent());
+
+        try {
+            if (dto.isDeleteImage()) {
+                if (board.getImageUrl() != null) {
+                    fileUtil.deleteFile(board.getImageUrl());
+                    board.setImageUrl(null);
+                }
+            }
+
+            if (dto.getImage() != null && !dto.getImage().isEmpty()) {
+                if (board.getImageUrl() != null) {
+                    fileUtil.deleteFile(board.getImageUrl());
+                }
+                String savedImageUrl = fileUtil.saveFile(dto.getImage());
+                board.setImageUrl(savedImageUrl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 처리 실패", e);
+        }
+
+        return new BoardResponseDTO(repository.save(board));
+    }
+
+
 }

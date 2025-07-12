@@ -7,6 +7,7 @@ import NavBar from './component/Navbar';
 import BoardList from './pages/board';
 import Write from './pages/write';
 import MyPage from './pages/MyPage';
+import PostDetail from './pages/PostDetail';
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -24,6 +25,7 @@ const AppRoutes = () => {
         <Route path='/board' element={<BoardList/>}/>
         <Route path='/write' element={<Write/>}/>
         <Route path='/mypage' element={<MyPage />} />
+        <Route path='/post/:id' element={<PostDetail />} />
         {/* Add other routes here */}
 
         <Route path='*'element={<Navigate to="/" replace />}/>

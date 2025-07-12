@@ -27,7 +27,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+
+        
 
         String header = request.getHeader("Authorization");
         System.out.println(">> [Authorization 헤더]: " + header);
@@ -39,26 +43,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtTokenProvider.validateToken(token)) {
                 String userId = jwtTokenProvider.getUserIdFromToken(token);
                 System.out.println(">> [토큰에서 추출한 userId]: " + userId);
-                
+
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(userId);
                 System.out.println(">> [UserDetails 로딩 성공]: " + userDetails.getUsername());
 
                 UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                        
-                    );
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 System.out.println(">> [SecurityContext에 인증 객체 등록 완료]");
             }
-        }else {
+        } else {
             System.out.println(">> [Authorization 헤더가 없거나 Bearer로 시작하지 않음]");
         }
 
-        // 필터 체인 계속 진행
         filterChain.doFilter(request, response);
     }
+
+
 }

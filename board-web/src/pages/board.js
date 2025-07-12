@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { getAllBoards, likeBoard } from "../api/boardApi";
 import "../css/board.css";
-import boardDummyData from "../data/boardDummyData";
 import BoardModal from "../component/BarderModel";
 
 const BoardList = () => {
@@ -10,25 +9,37 @@ const BoardList = () => {
     const [searchKeyword, setSearchKeyword] = useState('');
     const [selectedBoard, setSelectedBoard] = useState(null);
 
-    // useEffect(() => {
-    //     fetch("/api/boards")
-    //         .then(res => res.json())
-    //         .then(data => setBoards(data));
-    // }, []);
+    const SERVER_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
     useEffect(() => {
-        // 더미 데이터 (서버 연동 전)
-        setBoards(boardDummyData);
-    }, []);
+        const fetchBoards = async () => {
+            try {
+                const response = await getAllBoards(searchKeyword);
+                setBoards(response.data);
+            } catch (error) {
+                console.error("Error fetching boards:", error);
+            }
+        };
+        fetchBoards();
+    }, [searchKeyword]);
 
     const handleSearch = () => {
         setSearchKeyword(search);
     };
 
-    const filteredBoards = boards.filter((board) =>
-        board.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        board.content.toLowerCase().includes(searchKeyword.toLowerCase())
-    );
+    const toggleLike = async (boardId) => {
+        try {
+            const response = await likeBoard(boardId);
+            setBoards(boards.map(board =>
+                board.id === boardId ? { ...board, liked: response.data } : board
+            ));
+            setSelectedBoard(prevBoard =>
+                prevBoard && prevBoard.id === boardId ? { ...prevBoard, liked: response.data } : prevBoard
+            );
+        } catch (error) {
+            console.error("Error toggling like:", error);
+        }
+    };
 
     return (
         <div className="board-container">
@@ -45,18 +56,18 @@ const BoardList = () => {
 
             {/* 게시글 리스트 */}
             <div className="board-grid">
-                {filteredBoards.map((board) => (
+                {boards.map((board) => (
                     <div
                         key={board.id}
                         className="board-card"
                         onClick={() => setSelectedBoard(board)}
                     >
-                        <img src={board.imageUrl} alt={board.title} />
+                        {board.imageUrl && <img src={SERVER_BASE_URL + board.imageUrl} alt={board.title} />}
                         <h3>{board.title}</h3>
                     </div>
                 ))}
             </div>
-            <BoardModal board={selectedBoard} onClose={() => setSelectedBoard(null)} />
+            <BoardModal board={selectedBoard} onClose={() => setSelectedBoard(null)} onToggleLike={toggleLike} />
         </div>
     );
 };

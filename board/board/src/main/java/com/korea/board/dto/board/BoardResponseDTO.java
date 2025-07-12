@@ -21,6 +21,7 @@ public class BoardResponseDTO {
     private LocalDate day;
     private int liked;
     private String writer;
+    private String userId;
 
     public BoardResponseDTO(Board board) {
         this.id = board.getId();
@@ -29,6 +30,12 @@ public class BoardResponseDTO {
         this.imageUrl = board.getImageUrl();
         this.day = board.getDay();
         this.liked = board.getLiked();
-        this.writer = board.getUser().getNickname();
+        if (board.getUser() != null) {
+            this.writer = board.getUser().getNickname();
+            this.userId = board.getUser().getUserId();
+        } else {
+            this.writer = null;
+            this.userId = null;
+        }
     }
 }

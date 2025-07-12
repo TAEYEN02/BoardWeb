@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createBoard } from "../api/boardApi";
 import "../css/boardWrite.css"; // ✨ CSS 따로 관리
 
-const Write = ({ onAdd }) => {
+const Write = () => {
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -15,7 +16,7 @@ const Write = ({ onAdd }) => {
         setImagePreview(URL.createObjectURL(file));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!title || !content) {
@@ -23,17 +24,20 @@ const Write = ({ onAdd }) => {
             return;
         }
 
-        const newPost = {
-            id: Date.now(),
-            title,
-            content,
-            imageUrl: imagePreview,
-            day: new Date().toISOString().split("T")[0],
-            liked: 0,
-        };
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("content", content);
+        if (imageFile) {
+            formData.append("image", imageFile);
+        }
 
-        onAdd(newPost);
-        navigate("/board");
+        try {
+            await createBoard(formData);
+            navigate("/board");
+        } catch (error) {
+            console.error("Error creating board:", error);
+            alert("글 작성에 실패했습니다.");
+        }
     };
 
     return (

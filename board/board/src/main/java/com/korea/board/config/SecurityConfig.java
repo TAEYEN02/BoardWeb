@@ -26,16 +26,26 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    	http.cors(); 
+    	
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT이므로 세션 사용 안함
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/h2-console/**").permitAll()
+                .requestMatchers("/auth/signup", "/auth/login", "/auth/findId", "/auth/findPassword", "/auth/check-nickname", "/auth/check-userid", "/h2-console/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/auth/{userId}").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/auth/{userId}").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/auth/*").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/boards/**").permitAll() // 게시글 조회는 전체 공개
                 .requestMatchers(HttpMethod.POST, "/api/boards").authenticated() // 게시글 작성은 로그인 필요
+                .requestMatchers(HttpMethod.PUT, "/api/boards/**").authenticated() //put(update)권한 추가
+                .requestMatchers(HttpMethod.DELETE, "/api/boards/**").authenticated() //delete 권한 까지
+                .requestMatchers(HttpMethod.POST, "/api/boards/{boardId}/like").permitAll() // 좋아요는 모든 사용자 허용
+                .requestMatchers(HttpMethod.GET, "/api/boards/{boardId}/comments").permitAll() // 댓글 조회는 모든 사용자 허용
+                .requestMatchers(HttpMethod.POST, "/api/boards/{boardId}/comments").authenticated() // 댓글 작성은 로그인 필요
+                .requestMatchers("/uploads/**").permitAll()//정적 파일 접근 권한 모두 허용
                 .anyRequest().authenticated()
             )
-            .headers(headers -> headers.frameOptions().sameOrigin()) // H2 콘솔용
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 등록
 
         return http.build();

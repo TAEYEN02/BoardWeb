@@ -1,10 +1,14 @@
 package com.korea.board.service;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.korea.board.model.User;
+import com.korea.board.repository.BoardRepository;
+import com.korea.board.repository.CommentRepository;
 import com.korea.board.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +17,7 @@ import com.korea.board.config.JwtTokenProvider;
 import com.korea.board.dto.user.LoginResponseDTO;
 import com.korea.board.dto.user.UserLoginDTO;
 import com.korea.board.dto.user.UserSignupDTO;
+import com.korea.board.dto.user.UserUpdateDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,10 @@ public class UserService {
 	public PasswordEncoder passwordEncoder;
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
+	@Autowired
+	private BoardRepository boardRepository;
+	@Autowired
+	private CommentRepository commentRepository;
 
 	// 유효성 검사
 	private void validateUserInfo(String userId, String email, String password) {
@@ -42,19 +51,19 @@ public class UserService {
 
 	// 회원가입
 	public UserSignupDTO create(User user) {
-		if (repository.existsByNickname(user.getNickname())) {
-			throw new RuntimeException("이미 사용 중인 닉네임입니다");
-		}
-		if (repository.existsById(user.getId())) {
-			throw new RuntimeException("이미 사용 중인 아이디입니다");
-		}
-		
-		validateUserInfo(user.getUserId(), user.getEmail(), user.getPassword());
-		
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		User saved = repository.save(user);
-		return new UserSignupDTO(saved);
-	} // 본인 정보만 필요하기 때문에 전체 List 안쓰고 그냥 save만
+	    if (repository.existsByNickname(user.getNickname())) {
+	        throw new RuntimeException("이미 사용 중인 닉네임입니다");
+	    }
+	    if (repository.existsByUserId(user.getUserId())) {
+	        throw new RuntimeException("이미 사용 중인 아이디입니다");
+	    }
+
+	    validateUserInfo(user.getUserId(), user.getEmail(), user.getPassword());
+
+	    user.setPassword(passwordEncoder.encode(user.getPassword()));
+	    User saved = repository.save(user);
+	    return new UserSignupDTO(saved);
+	}// 본인 정보만 필요하기 때문에 전체 List 안쓰고 그냥 save만
 
 	// 로그인 로직
 	public LoginResponseDTO login(UserLoginDTO dto) {
@@ -95,5 +104,57 @@ public class UserService {
 	public boolean isUserIdDuplicate(String userId) {
 		return repository.existsByUserId(userId);
 	}
+
+	// 프로필 업데이트
+	public User updateProfile(String userId, UserUpdateDTO dto) {
+		User user = repository.findByUserId(userId)
+				.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+		// 닉네임 중복 확인 (자기 자신은 제외)
+		if (dto.getNickname() != null && !user.getNickname().equals(dto.getNickname()) && repository.existsByNickname(dto.getNickname())) {
+			throw new RuntimeException("이미 사용 중인 닉네임입니다.");
+		}
+
+		// 닉네임 업데이트
+		if (dto.getNickname() != null) {
+			user.setNickname(dto.getNickname());
+		}
+
+		// 비밀번호 업데이트
+		if (dto.getNewPassword() != null && !dto.getNewPassword().isEmpty()) {
+			if (dto.getCurrentPassword() == null || !passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
+				throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
+			}
+            // 새 비밀번호 유효성 검사 (아이디, 이메일은 변경되지 않으므로 기존 값 사용)
+            validateUserInfo(user.getUserId(), user.getEmail(), dto.getNewPassword());
+
+			user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+		}
+
+		return repository.save(user);
+	}
+
+	// 회원 탈퇴
+	public void deleteUser(String userId, String password) {
+	    String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+	    System.out.println("Authenticated userId: " + authenticatedUserId);
+
+	    if (!authenticatedUserId.equals(userId)) {
+	        throw new AccessDeniedException("자신의 계정만 탈퇴할 수 있습니다.");
+	    }
+
+	    User user = repository.findByUserId(userId)
+	            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+	    if (!passwordEncoder.matches(password, user.getPassword())) {
+	        throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+	    }
+
+	    commentRepository.deleteByUser(user);
+	    boardRepository.deleteByUser(user);
+	    repository.delete(user);
+	}
+
+
 
 }

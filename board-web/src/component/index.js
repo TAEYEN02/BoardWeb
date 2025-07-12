@@ -1,144 +1,368 @@
-import React, { useState } from 'react';
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
-import ko from 'date-fns/locale/ko';
-import '../css/MyPage.css';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { logout, deleteUser } from '../api/userApi';
 
-const locales = {
-  'ko': ko,
-};
+// --- Styled Components ---
 
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
+const UserProfileContainer = styled.div`
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+`;
+
+const ProfileImage = styled.img`
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  border: 3px solid #f0f0f0;
+`;
+
+const Nickname = styled.h2`
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0;
+`;
+
+const UserId = styled.p`
+  font-size: 16px;
+  color: #888;
+  margin: 0 0 20px 0;
+`;
+
+const EditButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const DeleteButton = styled(EditButton)`
+  background-color: #dc3545;
+
+  &:hover {
+    background-color: #c82333;
+  }
+`;
+
+const EditForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const FormInput = styled.input`
+  width: 80%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  text-align: center;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const SaveButton = styled(EditButton)`
+  background-color: #28a745;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
+const CancelButton = styled(EditButton)`
+  background-color: #6c757d;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+const MyPostListContainer = styled.div`
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+`;
+
+const PostList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const PostCard = styled.li`
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    color: #333;
+  }
+
+  span {
+    font-size: 14px;
+    color: #777;
+  }
+`;
+
+
+// --- Components ---
 
 const UserProfile = ({ user }) => {
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [bio, setBio] = useState(user.bio);
+  const [isEditing, setIsEditing] = useState(false);
+  const [nickname, setNickname] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const [newImageFile, setNewImageFile] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // 실제 API 호출은 여기에 구현합니다.
-    alert('프로필이 업데이트되었습니다!');
+  useEffect(() => {
+    if (user) {
+      setNickname(user.nickname || '');
+      setProfileImage(`https://ui-avatars.com/api/?name=${user.nickname}&background=random&size=128`);
+    }
+  }, [user]);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
+  const handleCancelClick = () => {
+    setIsEditing(false);
+    setNewImageFile(null);
+    // Reset nickname to original value from prop
+    setNickname(user.nickname || '');
+  };
+
+  const handleSaveClick = async () => {
+    if (!user || !user.userId) {
+      alert("사용자 정보가 없습니다.");
+      return;
+    }
+
+    if (newPassword && newPassword !== confirmNewPassword) {
+      alert("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      return;
+    }
+
+    if (newPassword && !currentPassword) {
+      alert("비밀번호를 변경하려면 현재 비밀번호를 입력해야 합니다.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    const updateData = { nickname: nickname };
+
+    if (newPassword) {
+      updateData.currentPassword = currentPassword;
+      updateData.newPassword = newPassword;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:10000/auth/${user.userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || '프로필 업데이트에 실패했습니다.');
+      }
+
+      const updatedUser = await response.json();
+
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      storedUser.nickname = updatedUser.nickname;
+      // If password was changed, the token might also change or need re-authentication
+      // For simplicity, we'll just update nickname in localStorage. User might need to re-login if token changes.
+      localStorage.setItem('user', JSON.stringify(storedUser));
+
+      if (newImageFile) {
+        setProfileImage(URL.createObjectURL(newImageFile));
+      }
+
+      alert('프로필이 성공적으로 업데이트되었습니다.');
+      setIsEditing(false);
+      // Reset password fields after successful save
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert(error.message);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setNewImageFile(e.target.files[0]);
+      setProfileImage(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  const handleWithdrawClick = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!user || !user.userId) {
+      alert("사용자 정보가 없습니다.");
+      return;
+    }
+
+    if (window.confirm("정말로 회원 탈퇴를 하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+      const password = window.prompt("회원 탈퇴를 계속하려면 비밀번호를 입력하세요:");
+      if (!password || password.trim() === '') {
+        alert("비밀번호가 입력되지 않았습니다. 회원 탈퇴가 취소되었습니다.");
+        return;
+      }
+
+      try {
+        await deleteUser(user.userId, password);
+        alert("회원 탈퇴가 성공적으로 처리되었습니다.");
+        logout();
+        window.location.href = '/login';
+      } catch (error) {
+        console.error("Error during withdrawal:", error);
+        alert("회원 탈퇴에 실패했습니다. 비밀번호를 확인하거나 다시 시도해주세요.");
+      }
+    }
+  };
+
+
+  if (!user) {
+    return <div>Loading profile...</div>;
+  }
+
   return (
-    <div className="mypage-section">
-      <h2>기본 정보 수정</h2>
-      <form className="user-profile-form" onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">이름</label>
+    <UserProfileContainer>
+      <ProfileImage src={profileImage} alt="Profile" />
+
+      {!isEditing ? (
+        <>
+          <Nickname>{user.nickname}</Nickname>
+          <UserId>@{user.userId}</UserId>
+          <EditButton onClick={handleEditClick}>프로필 수정</EditButton>
+          <DeleteButton onClick={handleWithdrawClick} style={{ marginTop: '10px' }}>탈퇴하기</DeleteButton>
+        </>
+      ) : (
+        <EditForm>
+          <label htmlFor="profile-image-upload" style={{ cursor: 'pointer', color: '#007bff', marginBottom: '10px' }}>
+            이미지 변경
+          </label>
           <input
-            id="name"
+            id="profile-image-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: 'none' }}
+          />
+
+          <FormInput
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            placeholder="닉네임"
           />
-        </div>
-        <div>
-          <label htmlFor="email">이메일</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+          <FormInput
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="현재 비밀번호 (변경 시)"
           />
-        </div>
-        <div>
-          <label htmlFor="bio">소개</label>
-          <textarea
-            id="bio"
-            rows="3"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-          ></textarea>
-        </div>
-        <button type="submit">수정하기</button>
-      </form>
-    </div>
+          <FormInput
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="새 비밀번호 (변경 시)"
+          />
+          <FormInput
+            type="password"
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            placeholder="새 비밀번호 확인"
+          />
+          <ButtonGroup>
+            <SaveButton onClick={handleSaveClick}>저장</SaveButton>
+            <CancelButton onClick={handleCancelClick}>취소</CancelButton>
+          </ButtonGroup>
+        </EditForm>
+      )}
+    </UserProfileContainer>
   );
 };
 
-const MyPostList = ({ posts }) => (
-  <div className="mypage-section">
-    <h2>내가 쓴 글</h2>
-    <ul className="post-list">
-      {posts.map((post) => (
-        <li key={post.id} className="post-item">
-          <span>{post.title}</span>
-          <span>{post.createdAt}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+const MyPostList = ({ posts }) => {
+  const navigate = useNavigate();
 
-const MyCalendar = ({ todos }) => {
-    const [events, setEvents] = useState(todos);
-    const [title, setTitle] = useState('');
-    const [start, setStart] = useState(new Date());
-    const [end, setEnd] = useState(new Date());
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`);
+  };
 
-    const handleAddTodo = (e) => {
-        e.preventDefault();
-        const newTodo = {
-            id: events.length + 1,
-            title,
-            start,
-            end,
-        };
-        setEvents([...events, newTodo]);
-        setTitle('');
-    };
-    
-    return (
-        <div className="mypage-section-calendar">
-            <h2>캘린더 & Todo</h2>
-            <div className="todo-form">
-                <h3>Todo 추가</h3>
-                <form onSubmit={handleAddTodo}>
-                    <input 
-                        type="text" 
-                        placeholder="할 일" 
-                        value={title} 
-                        onChange={e => setTitle(e.target.value)} 
-                        required 
-                    />
-                   
-                    <button type="submit">추가</button>
-                </form>
-            </div>
-            <div className="calendar-container">
-                <Calendar
-                    localizer={localizer}
-                    events={events}
-                    startAccessor="start"
-                    endAccessor="end"
-                    style={{ height: 500 }}
-                    messages={{
-                        next: "다음",
-                        previous: "이전",
-                        today: "오늘",
-                        month: "월",
-                        week: "주",
-                        day: "일",
-                        agenda: "목록",
-                        date: "날짜",
-                        time: "시간",
-                        event: "이벤트",
-                    }}
-                />
-            </div>
-        </div>
-    );
+  return (
+    <MyPostListContainer>
+      <SectionTitle>내가 쓴 글</SectionTitle>
+      <PostList>
+        {posts && posts.length > 0 ? (
+          posts.map((post) => (
+            <PostCard key={post.id} onClick={() => handlePostClick(post.id)}>
+              <h3>{post.title}</h3>
+              <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+            </PostCard>
+          ))
+        ) : (
+          <p>작성한 글이 없습니다.</p>
+        )}
+      </PostList>
+    </MyPostListContainer>
+  );
 };
 
-export { UserProfile, MyPostList, MyCalendar };
+export { UserProfile, MyPostList };

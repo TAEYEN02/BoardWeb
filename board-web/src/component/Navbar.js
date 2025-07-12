@@ -1,7 +1,9 @@
 import { AppBar, Button, Grid, Toolbar, Typography } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { logout } from "../api/userApi";
 
 const NavBar = () => {
+    const navigate = useNavigate();
     const nevItems = [
         { name: "home", path: "/main" },
         { name: "board", path: "/board" },
@@ -10,8 +12,9 @@ const NavBar = () => {
     ];
 
     const onhandleLogout = () => {
-        window.location.href = '/';
+        logout();
         alert("로그아웃");
+        navigate('/', { replace: true });
     }
     return (
         <AppBar position="static" sx={{ background: "#fff", boxShadow: 0.5, width: "100%" }}>
