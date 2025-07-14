@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { logout, deleteUser } from '../api/userApi';
 
-// --- Styled Components ---
-
 const UserProfileContainer = styled.div`
   background-color: #ffffff;
   padding: 25px;
@@ -220,9 +218,7 @@ const UserProfile = ({ user }) => {
 
       const storedUser = JSON.parse(localStorage.getItem('user'));
       storedUser.nickname = updatedUser.nickname;
-      // If password was changed, the token might also change or need re-authentication
-      // For simplicity, we'll just update nickname in localStorage. User might need to re-login if token changes.
-      localStorage.setItem('user', JSON.stringify(storedUser));
+     localStorage.setItem('user', JSON.stringify(storedUser));
 
       if (newImageFile) {
         setProfileImage(URL.createObjectURL(newImageFile));
@@ -230,7 +226,6 @@ const UserProfile = ({ user }) => {
 
       alert('프로필이 성공적으로 업데이트되었습니다.');
       setIsEditing(false);
-      // Reset password fields after successful save
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');

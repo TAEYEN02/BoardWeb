@@ -11,6 +11,7 @@ import com.korea.board.repository.BoardRepository;
 import com.korea.board.repository.CommentRepository;
 import com.korea.board.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import com.korea.board.config.JwtTokenProvider;
@@ -135,11 +136,14 @@ public class UserService {
 	}
 
 	// 회원 탈퇴
+	@Transactional
 	public void deleteUser(String userId, String password) {
 	    String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-	    System.out.println("Authenticated userId: " + authenticatedUserId);
+	    System.out.println("DEBUG: Authenticated userId from token: " + authenticatedUserId);
+	    System.out.println("DEBUG: userId from request path: " + userId);
 
 	    if (!authenticatedUserId.equals(userId)) {
+	        System.out.println("DEBUG: User ID mismatch. Authenticated: " + authenticatedUserId + ", Requested: " + userId);
 	        throw new AccessDeniedException("자신의 계정만 탈퇴할 수 있습니다.");
 	    }
 
@@ -147,6 +151,7 @@ public class UserService {
 	            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
 	    if (!passwordEncoder.matches(password, user.getPassword())) {
+	        System.out.println("DEBUG: Password mismatch for user: " + userId);
 	        throw new RuntimeException("비밀번호가 일치하지 않습니다.");
 	    }
 
