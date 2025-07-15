@@ -13,31 +13,41 @@ const NavBar = () => {
 
     const onhandleLogout = () => {
         logout();
-        alert("로그아웃");
-        navigate('/', { replace: true });
+        window.location.replace('/');
     }
     return (
         <AppBar position="static" sx={{ background: "#fff", boxShadow: 0.5, width: "100%" }}>
             <Toolbar sx={{ width: "95%" , mx:"auto"}}>
-                <Grid container justifyContent="flex-end" spacing={6} alignItems="center" sx={{ width: "100%" }}>
-                    {nevItems.map((item) => (
-                        <Grid item key={item.path}>
-                            <NavLink
-                                to={item.path}
-                                style={{ textDecoration: "none", color: "black" }}
-                            >
-                                <Typography variant="inherit">{item.name}</Typography>
-                            </NavLink>
-
-                        </Grid>
-                    ))}
+                <Grid container justifyContent="space-between" alignItems="center" sx={{ width: "100%" }}>
+                    {/* Left side: Blog logo */}
                     <Grid item>
-                        <Button
-                            onClick={onhandleLogout}
-                            sx={{ whiteSpace: "nowrap", color: "gray", fontSize: "16px", backgroundColor:"lightgray" }}
-                        >
-                            logout
-                        </Button>
+                        <NavLink to="/main" style={{ textDecoration: "none", color: "black" }}>
+                            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+                                Blog
+                            </Typography>
+                        </NavLink>
+                    </Grid>
+                    {/* Right side: Nav items and logout button */}
+                    <Grid item>
+                        <Grid container spacing={6} alignItems="center">
+                            {nevItems.map((item) => (
+                                <Grid item key={item.path}>
+                                    <NavLink
+                                        to={item.path}
+                                        style={{ textDecoration: "none", color: "black" }}
+                                    >
+                                        <Typography variant="inherit">{item.name}</Typography>
+                                    </NavLink>
+                                </Grid>
+                            ))}
+                            <Grid item>
+                                <Button
+                                    onClick={onhandleLogout}
+                                >
+                                    logout
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Toolbar>

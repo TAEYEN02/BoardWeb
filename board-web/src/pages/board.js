@@ -62,7 +62,7 @@ const BoardList = () => {
                         className="board-card"
                         onClick={() => setSelectedBoard(board)}
                     >
-                        {board.imageUrl && <img src={SERVER_BASE_URL + board.imageUrl} alt={board.title} />}
+                        {board.imageUrl && <img src={`${SERVER_BASE_URL}${board.imageUrl}`} alt={board.title} />}
                         <h3>{board.title}</h3>
                     </div>
                 ))}

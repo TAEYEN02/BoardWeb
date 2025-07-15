@@ -37,7 +37,9 @@ const Content = styled.div`
 
 const PostImage = styled.img`
   max-width: 100%;
+  max-height: 400px; /* 원하는 최대 높이로 조절하세요 */
   height: auto;
+  object-fit: contain; /* 이미지가 잘리지 않고 비율 유지 */
   border-radius: 8px;
   margin-bottom: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
@@ -135,7 +137,7 @@ const PostDetail = () => {
         setImagePreview(response.data.imageUrl); // Set initial image preview
       } catch (error) {
         console.error("Error fetching post:", error);
-        // Handle error, e.g., navigate to a 404 page or show an error message
+        alert("게시물을 불러오는 데 실패했습니다.");
       }
     };
 
@@ -147,7 +149,7 @@ const PostDetail = () => {
     setSelectedFile(file);
     if (file) {
       setImagePreview(URL.createObjectURL(file));
-      setDeleteExistingImage(false); // If new file is selected, don't delete existing
+      setDeleteExistingImage(false); 
     } else {
       setImagePreview(post?.imageUrl || null);
     }
@@ -177,12 +179,10 @@ const PostDetail = () => {
       if (selectedFile) {
         formData.append('image', selectedFile);
       } else if (deleteExistingImage) {
-        formData.append('deleteImage', 'true'); // Signal to backend to delete image
+        formData.append('deleteImage', 'true'); 
       }
 
-      // Assuming updateBoard API takes FormData
       await updateBoard(id, formData);
-      // Update the local post state with new values
       setPost(prevPost => ({
         ...prevPost,
         title: editedTitle,
@@ -266,7 +266,7 @@ const PostDetail = () => {
           <Title>{post.title}</Title>
           <Author>작성자: {post.writer || '알 수 없음'}</Author>
           <p>작성일: {post.day}</p>
-          {post.imageUrl && <PostImage src={SERVER_BASE_URL + post.imageUrl} alt={post.title} />}
+          {post.imageUrl && <PostImage src={`${SERVER_BASE_URL}${post.imageUrl}`} alt={post.title} />}
           <Content>{post.content}</Content>
           {console.log('Post User ID:', post.userId)}
           {console.log('Current User ID:', currentUserId)}

@@ -49,5 +49,12 @@ export const checkUserId = (userId) => {
 };
 
 export const deleteUser = (userId, password) => {
-    return instance.delete(`${API_BASE_URL}/${userId}`, { data: { password } });
+  return instance.request({
+    url: `${API_BASE_URL}/${userId}`,
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    data: { password }, // @RequestBody에 들어갈 데이터
+    withCredentials: true, // 쿠키 인증 등을 쓰는 경우
+  });
 };
+

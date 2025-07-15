@@ -28,7 +28,6 @@ public class CommentController {
     public ResponseEntity<CommentResponseDTO> addComment(@PathVariable("boardId") Long boardId,
                                                          @RequestBody CommentCreateDTO dto,
                                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
-        // Ensure the boardId in the path matches the one in the DTO, or set it from path
         dto.setBoardId(boardId);
         CommentResponseDTO newComment = commentService.addComment(dto, userDetails.getUser());
         return ResponseEntity.ok(newComment);

@@ -20,7 +20,11 @@ public class FileStorageUtil {
 			return null;
 
 		String originalFilename = file.getOriginalFilename();
-		String ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+		String ext = "";
+		int dotIndex = originalFilename.lastIndexOf(".");
+		if (dotIndex > 0 && dotIndex < originalFilename.length() - 1) {
+		    ext = originalFilename.substring(dotIndex);
+		}
 		String uuid = UUID.randomUUID().toString();
 		String newFileName = uuid + ext;
 
