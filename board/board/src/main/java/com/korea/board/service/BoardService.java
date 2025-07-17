@@ -83,6 +83,11 @@ public class BoardService {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
 
+        // 이미지 파일 삭제 로직 추가
+        if (board.getImageUrl() != null && !board.getImageUrl().isEmpty()) {
+            fileUtil.deleteFile(board.getImageUrl());
+        }
+
         repository.delete(board);
     }
 

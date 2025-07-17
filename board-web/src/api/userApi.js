@@ -48,9 +48,13 @@ export const checkUserId = (userId) => {
     return instance.get(`${API_BASE_URL}/check-userid?userId=${userId}`);
 };
 
-export const deleteUser = (userId, password) => {
+export const updateUser = (userData) => {
+    return instance.put(`${API_BASE_URL}`, userData);
+};
+
+export const deleteUser = (password) => {
   return instance.request({
-    url: `${API_BASE_URL}/${userId}`,
+    url: API_BASE_URL,
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     data: { password }, // @RequestBody에 들어갈 데이터
