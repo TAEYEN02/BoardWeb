@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../css/signup.css";
 import ButtonComponent from "../component/Button";
 import { useState } from "react";
-import { checkNicknameDuplicate, checkUserIdDuplicate, signup } from "../api/user";
+import { checkNicknameDuplicate, checkUserIdDuplicate, signup,checkUserEmailDuplicate } from "../api/user";
 
 const SignUp = () => {
     const [userName, setUserName] = useState('');
@@ -23,10 +23,10 @@ const SignUp = () => {
 
     // 이메일 형식 체크 
     const isValidEmail = (email) =>
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/.test(email);
 
     const isValidPassword = (password) => {
-        // 조건: 8자 이상, 영문+숫자+특수문자 조합
+        // 조건: 8자 이상, 영문+숫자+특수��자 조합
         const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
         return regex.test(password);
     };
@@ -104,6 +104,23 @@ const SignUp = () => {
             alert("중복 확인 중에 오류가 발생했습니다");
         }
     }
+
+     const distinctUserEmail = async (e) => {
+        e.preventDefault();
+        try {
+            const isDuplicate = await checkUserEmailDuplicate(email);
+            if (isDuplicate) {
+                alert("이미 사용 중인 이메일 입니다")
+            } else {
+                alert("사용 가능한 이메일입니다");
+            }
+        } catch (err) {
+            console.log(err);
+            alert("중복 확인 중에 오류가 발생했습니다");
+        }
+    }
+
+
     return (
         <div className="Signup">
             <div className="Signup-Box">
@@ -150,6 +167,7 @@ const SignUp = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
+                         <ButtonComponent title="distinct" onClick={distinctUserEmail}>중복확인</ButtonComponent>
                     </div>
                     <div className="input-wrapper">
                         <LockIcon className="icon" />

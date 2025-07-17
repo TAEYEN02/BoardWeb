@@ -1,6 +1,5 @@
 package com.korea.board.config;
 
-import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +32,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT이므로 세션 사용 안함
             .authorizeHttpRequests(auth -> auth
+            		 .requestMatchers("/auth/signup", "/auth/login").permitAll()
+            		.requestMatchers("/api/auth/**").permitAll()
+            	.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
+            	 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .requestMatchers("/","/auth/signup", "/auth/login", "/auth/findId", "/auth/findPassword", "/auth/check-nickname", "/auth/check-userid", "/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/auth/{userId}").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/auth/{userId}").authenticated()
@@ -48,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() //Preflight 요청 (OPTIONS) 허용 여부
                 .anyRequest().authenticated()
             )
+           
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 등록
 
         return http.build();
@@ -67,13 +71,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://app.taeyeon02.store"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        configuration.addAllowedOrigin("http://localhost:3000"); // 허용할 origin
+        configuration.addAllowedOrigin("https://app.taeyeon02.store");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true); // 이게 true면 allowedOrigins는 * 안됨!
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

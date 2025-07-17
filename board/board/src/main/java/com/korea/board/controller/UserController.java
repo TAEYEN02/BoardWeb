@@ -25,7 +25,7 @@ import com.korea.board.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:3001", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "https://app.taeyeon02.store"}, allowCredentials = "true")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -63,6 +63,12 @@ public class UserController {
 	@GetMapping("/check-userid") // 아이디 중복 확인
 	public ResponseEntity<?> checkUserIdDuplicate(@RequestParam("userId") String userId) {
 	    boolean exists = service.isUserIdDuplicate(userId);
+	    return ResponseEntity.ok(exists); // true면 중복됨
+	}
+
+	@GetMapping("/check-email") // 이메일 중복 확인
+	public ResponseEntity<?> checkEmailDuplicate(@RequestParam("email") String email) {
+	    boolean exists = service.isEmailDuplicate(email);
 	    return ResponseEntity.ok(exists); // true면 중복됨
 	}
 

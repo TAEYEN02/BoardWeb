@@ -16,10 +16,25 @@ export const checkUserIdDuplicate = async (userId) => {
   return res.data; // true면 중복
 };
 
+// 이메일(email) 중복 확인
+export const checkUserEmailDuplicate = async (email) => {
+  const res = await instance.get(`/auth/check-email`, {
+    params: { email },
+  });
+  return res.data; // true면 중복
+};
+
+
 // 회원가입
-export const signup = async (signupData) => {
-  const res = await instance.post(`/auth/signup`, signupData);
-  return res.data;
+export const signup = (userData) => {
+  return instance.post(
+    `/auth/signup`,
+    userData,
+    {
+      withCredentials: false, // 쿠키 제거
+      headers: {} // Authorization 제거
+    }
+  );
 };
 
 // 아이디 찾기

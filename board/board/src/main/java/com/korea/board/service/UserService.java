@@ -112,6 +112,11 @@ public class UserService {
 		return repository.existsByUserId(userId);
 	}
 
+	// 이메일 중복확인
+	public boolean isEmailDuplicate(String email) {
+		return repository.existsByEmail(email);
+	}
+
 	// 프로필 업데이트
 	public User updateProfile(String userId, UserUpdateDTO dto) {
 		
