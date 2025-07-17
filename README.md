@@ -1,5 +1,7 @@
 # BoardWeb
 - React로 구현한 간단 게시판
+- https://app.taeyeon02.store/
+- 기간 : 
 ## 📖주요 기능
 <h3>회원 관리</h3>
 <li>로그인 : 아이디와 비밀번호로 로그인</li>
