@@ -64,6 +64,9 @@ public class UserService {
 	    if (repository.existsByUserId(user.getUserId())) {
 	        throw new RuntimeException("이미 사용 중인 아이디입니다");
 	    }
+	    if (repository.existsByEmail(user.getEmail())) {
+	        throw new RuntimeException("이미 사용 중인 이메일입니다");
+	    }
 
 	    validateUserInfo(user.getUserId(), user.getEmail(), user.getPassword());
 

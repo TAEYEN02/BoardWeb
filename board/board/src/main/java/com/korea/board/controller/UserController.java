@@ -33,11 +33,18 @@ public class UserController {
 	
 	public final UserService service;
 	
-	@PostMapping("/signup") //회원가입 
-	public ResponseEntity<?> create(@RequestBody UserSignupDTO dto){
-		User entity = UserSignupDTO.toEntity(dto);
-		UserSignupDTO user = service.create(entity); 
-		return ResponseEntity.ok(user);
+	@PostMapping("/signup") // 회원가입
+	public ResponseEntity<?> create(@RequestBody UserSignupDTO dto) {
+	    if (!dto.isPasswordConfirmed()) {
+	        return ResponseEntity
+	            .badRequest()
+	            .body("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+	    }
+
+	    User entity = UserSignupDTO.toEntity(dto);
+	    UserSignupDTO user = service.create(entity);
+
+	    return ResponseEntity.ok(user);
 	}
 	@PostMapping("/login")//로그인
 	public ResponseEntity<?> login(@RequestBody UserLoginDTO dto){

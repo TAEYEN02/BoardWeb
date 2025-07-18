@@ -61,7 +61,8 @@ const SignUp = () => {
                 userId,
                 nickname,
                 email,
-                password
+                password,
+                confirmPassword
             };
 
             await signup(signupData);
