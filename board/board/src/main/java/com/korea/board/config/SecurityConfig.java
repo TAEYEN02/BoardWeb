@@ -36,7 +36,7 @@ public class SecurityConfig {
             		.requestMatchers("/api/auth/**").permitAll()
             	.requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
             	 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .requestMatchers("/","/auth/signup", "/auth/login", "/auth/findId", "/auth/findPassword", "/auth/check-nickname", "/auth/check-userid", "/h2-console/**").permitAll()
+                .requestMatchers("/","/auth/signup", "/auth/login", "/auth/findId", "/auth/findPassword", "/auth/check-nickname", "/auth/check-userid","/auth/check-email", "/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/auth/{userId}").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/auth/{userId}").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/auth/*").authenticated()
