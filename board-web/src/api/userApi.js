@@ -14,10 +14,6 @@ instance.interceptors.request.use(config => {
 });
 
 
-export const signup = (userData) => {
-    return instance.post(`${API_BASE_URL}/signup`, userData);
-};
-
 export const login = async (credentials) => {
     const response = await instance.post(`${API_BASE_URL}/login`, credentials);
     if (response.data && response.data.token) {
@@ -32,25 +28,14 @@ export const logout = () => {
     localStorage.removeItem('user');
 };
 
-export const findId = (data) => {
-    return instance.post(`${API_BASE_URL}/findId`, data);
+
+export const updateUser = (userData) => {
+    return instance.put(`${API_BASE_URL}`, userData);
 };
 
-export const findPassword = (data) => {
-    return instance.post(`${API_BASE_URL}/findPassword`, data);
-};
-
-export const checkNickname = (nickname) => {
-    return instance.get(`${API_BASE_URL}/check-nickname?nickname=${nickname}`);
-};
-
-export const checkUserId = (userId) => {
-    return instance.get(`${API_BASE_URL}/check-userid?userId=${userId}`);
-};
-
-export const deleteUser = (userId, password) => {
+export const deleteUser = (password) => {
   return instance.request({
-    url: `${API_BASE_URL}/${userId}`,
+    url: API_BASE_URL,
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     data: { password }, // @RequestBody에 들어갈 데이터

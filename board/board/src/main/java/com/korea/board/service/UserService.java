@@ -46,9 +46,15 @@ public class UserService {
 		}
 
 		if (!password.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$")) {
-			throw new IllegalArgumentException("비밀번호는 8자 이상이며, 영문/숫자/특수문자를 포함해야 합니다.");
-		}
-	}
+            throw new IllegalArgumentException("비밀번호는 8자 이상이며, 영문/숫자/특수문자를 포함해야 합니다.");
+        }
+    }
+
+    private void validatePassword(String password) {
+        if (!password.matches("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*]).{8,}$")) {
+            throw new IllegalArgumentException("비밀번호는 8자 이상이며, 영문/숫자/특수문자를 포함해야 합니다.");
+        }
+    }
 
 	// 회원가입
 	public UserSignupDTO create(User user) {
@@ -106,8 +112,21 @@ public class UserService {
 		return repository.existsByUserId(userId);
 	}
 
+	// 이메일 중복확인
+	public boolean isEmailDuplicate(String email) {
+		return repository.existsByEmail(email);
+	}
+
 	// 프로필 업데이트
 	public User updateProfile(String userId, UserUpdateDTO dto) {
+		
+		String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 요청된 userId와 인증된 ID가 같은지 확인
+        if (!authenticatedUserId.equals(userId)) {
+            throw new AccessDeniedException("자신의 프로필만 수정할 수 있습니다.");
+        }
+
 		User user = repository.findByUserId(userId)
 				.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
@@ -126,8 +145,8 @@ public class UserService {
 			if (dto.getCurrentPassword() == null || !passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
 				throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
 			}
-            // 새 비밀번호 유효성 검사 (아이디, 이메일은 변경되지 않으므로 기존 값 사용)
-            validateUserInfo(user.getUserId(), user.getEmail(), dto.getNewPassword());
+            // 새 비밀번호 유효성 검사
+            validatePassword(dto.getNewPassword());
 
 			user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
 		}

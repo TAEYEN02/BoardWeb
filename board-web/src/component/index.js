@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { logout, deleteUser } from '../api/userApi';
+import { logout, deleteUser, updateUser } from '../api/userApi';
 
 const UserProfileContainer = styled.div`
   background-color: #ffffff;
@@ -200,25 +200,11 @@ const UserProfile = ({ user }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:10000/auth/${user.userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(updateData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '프로필 업데이트에 실패했습니다.');
-      }
-
-      const updatedUser = await response.json();
+      const updatedUser = await updateUser(updateData);
 
       const storedUser = JSON.parse(localStorage.getItem('user'));
-      storedUser.nickname = updatedUser.nickname;
-     localStorage.setItem('user', JSON.stringify(storedUser));
+      storedUser.nickname = updatedUser.data.nickname;
+      localStorage.setItem('user', JSON.stringify(storedUser));
 
       if (newImageFile) {
         setProfileImage(URL.createObjectURL(newImageFile));
@@ -260,7 +246,7 @@ const UserProfile = ({ user }) => {
       }
 
       try {
-        await deleteUser(user.userId, password);
+        await deleteUser(password);
         alert("회원 탈퇴가 성공적으로 처리되었습니다.");
         logout();
         window.location.href = '/login';
