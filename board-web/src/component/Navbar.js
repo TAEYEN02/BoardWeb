@@ -19,7 +19,6 @@ const NavBar = () => {
         <AppBar position="static" sx={{ background: "#fff", boxShadow: 0.5, width: "100%" }}>
             <Toolbar sx={{ width: "95%" , mx:"auto"}}>
                 <Grid container justifyContent="space-between" alignItems="center" sx={{ width: "100%" }}>
-                    {/* Left side: Blog logo */}
                     <Grid item>
                         <NavLink to="/main" style={{ textDecoration: "none", color: "black" }}>
                             <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
@@ -27,7 +26,6 @@ const NavBar = () => {
                             </Typography>
                         </NavLink>
                     </Grid>
-                    {/* Right side: Nav items and logout button */}
                     <Grid item>
                         <Grid container spacing={6} alignItems="center">
                             {nevItems.map((item) => (
