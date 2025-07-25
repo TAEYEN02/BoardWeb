@@ -25,6 +25,11 @@
 
 ---
 
+## 🗂 폴더 구조
+📦 BoardWeb <br/>
+├── board/ # 백엔드 (Spring Boot) <br/>
+└── board-web/ # 프론트엔드 (React)
+
 ## 🔧 기술 스택
 
 ### Backend (`board`)
@@ -47,6 +52,91 @@
 
 ---
 
+## 🛡 SonarQube 코드 품질 진단 및 개선
+
+### 🔐 Security Hotspot (/index.js)
+- **이슈**: Express가 기본적으로 `X-Powered-By: Express` 헤더를 노출함
+- **위험**: 프레임워크 버전 노출로 인한 정보 유출 위험
+  ```jsx
+  const express = require('express');
+  const path = require('path');
+  const app = express(); //이부분 = This framework implicitly discloses version information by default. Make sure it is safe here.
+  ```
+- **조치**: `app.disable('x-powered-by')` 설정하여 해결
+
+---
+
+### 💡 Reliability (신뢰성)
+- **이슈**: `<div>` 또는 `<span>`을 버튼처럼 사용할 경우 접근성 문제 발생
+- **해결 방향**:
+  - 가능하면 `<button>` 사용
+  - 불가할 경우 ARIA role, tabIndex, onKeyPress 추가
+
+  ```jsx
+  <div
+   role="button"
+    tabIndex="0"
+    onClick={handleClick}
+    onKeyPress={(e) => { if (e.key === 'Enter') handleClick(); }}
+  >
+    Click me
+  </div>
+  ```
+### 🔧 Maintainability (유지보수성)
+1. **Optional Chaining 누락**
+   - 이슈 메시지 : "Prefer using an optional chain expression instead, as it's more concise and easier to read."
+   - 파일 위치 : axiosInstance.js, userApi.js, login.js, index.js
+   - **해결 방법** : 코드 가족성을 높여 런타임 오류 예방, 중첩된 객체 접근 할때 조건문을 줄임으로써 유지보수가 쉽도록 해야함.
+     ```jsx
+     //Before
+      if (user && user.profile && user.profile.name) {
+        console.log(user.profile.name);
+      }
+
+      //After
+      console.log(user?.profile?.name);
+      ```
+   
+2. **Props Validation 누락**
+     - 이슈 메시지 : 'props.xxx' is missing in props validation
+     - 파일 위치 : BarderModel.js, Button.js, Navbar.js, DiaryCard.js
+     - **해결방법** : 예상치 못한 타입 전달로 인해 런타임 에러가 발생할 수 있어, 사용방식에 대한 명확안 계약이 중요함으로 PropTypes 또는 TypeScript로 타입 검사를 강화해야함.
+        ```jsx
+        //Before
+        const MyComponent = ({ user }) => <div>{user.name}</div>;
+
+        //After
+        import PropTypes from 'prop-types';
+
+        const MyComponent = ({ user }) => <div>{user.name}</div>;
+
+        MyComponent.propTypes = {
+          user: PropTypes.shape({
+            name: PropTypes.string.isRequired,
+          }),
+        };
+        ```
+3. **중첩 삼항 연산자**
+   - 이슈 메시지 : "Extract this nested ternary operation into an independent statement."
+   - 파일 위치 : PostDetail.js
+   - **해결방법** : 중첩된 삼항 연산자는 가독성을 떨어뜨려, 유지보수가 어렵다. 따라서 조건 분기 구조로 리팩토링하여 가독성과 디버깅 효율을 개선해야함.
+    ```jsx
+     //Before
+      const status = isLoading ? 'Loading...' : error ? 'Error' : 'Done';
+
+      //After
+      let status;
+      if (isLoading) {
+        status = 'Loading...';
+      } else if (error) {
+        status = 'Error';
+      } else {
+        status = 'Done';
+      }
+     ```
+
+---
+
 ## 🛠 향후 개선 계획
 
 1. **이미지 저장 개선**  
@@ -64,7 +154,4 @@
 
 ---
 
-## 🗂 폴더 구조
-📦 BoardWeb <br/>
-├── board/ # 백엔드 (Spring Boot) <br/>
-└── board-web/ # 프론트엔드 (React)
+
