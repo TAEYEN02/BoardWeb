@@ -2,7 +2,7 @@
 
 > React 기반의 간단한 게시판 웹 애플리케이션
 
-- **배포 링크**: [https://app.taeyeon02.store](https://app.taeyeon02.store)  
+- **배포 링크**: [https://www.taeyeon02.store](https://www.taeyeon02.store)  
 - **개발·배포 기간**: 2025.06.20 ~ 2025.07.18
 
 ---
